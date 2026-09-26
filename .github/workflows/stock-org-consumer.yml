@@ -1,0 +1,19 @@
+name: Synthetic stock OpenCode organization secret consumer
+on:
+  workflow_dispatch:
+jobs:
+  digest:
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - name: Report presence and hash only
+        shell: bash
+        env:
+          CANARY: ${{ secrets.OPENCODE_STOCK_SCOPE_20260926_1648 }}
+        run: |
+          node <<'NODE'
+          const crypto = require('node:crypto')
+          const value = process.env.CANARY || ''
+          console.log('canary_present=' + Boolean(value))
+          if (value) console.log('canary_sha256=' + crypto.createHash('sha256').update(value).digest('hex'))
+          NODE
