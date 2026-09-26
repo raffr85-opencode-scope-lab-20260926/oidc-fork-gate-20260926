@@ -1,0 +1,25 @@
+name: OIDC Fork Gate
+on:
+  pull_request_review_comment:
+    types: [created]
+permissions:
+  contents: read
+  id-token: write
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Record event and OIDC capability
+        shell: bash
+        env:
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+        run: |
+          echo "event=${GITHUB_EVENT_NAME}"
+          echo "actor=${GITHUB_ACTOR}"
+          echo "head_repo=${HEAD_REPO}"
+          echo "ref=${GITHUB_REF}"
+          if [[ -n "${ACTIONS_ID_TOKEN_REQUEST_URL:-}" && -n "${ACTIONS_ID_TOKEN_REQUEST_TOKEN:-}" ]]; then
+            echo "oidc_request_pair=present"
+          else
+            echo "oidc_request_pair=absent"
+          fi
