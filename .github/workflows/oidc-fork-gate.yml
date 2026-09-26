@@ -1,13 +1,20 @@
-name: OIDC Fork Gate
+name: OIDC Fork Gate Exact Permissions
 on:
   pull_request_review_comment:
     types: [created]
-permissions:
-  contents: read
-  id-token: write
 jobs:
   probe:
+    if: |
+      contains(github.event.comment.body, ' /oc') ||
+      startsWith(github.event.comment.body, '/oc') ||
+      contains(github.event.comment.body, ' /opencode') ||
+      startsWith(github.event.comment.body, '/opencode')
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      pull-requests: read
+      issues: read
     steps:
       - name: Record event and OIDC capability
         shell: bash
